@@ -1,0 +1,56 @@
+#This is a sample neuron 
+#ALWAYS use SI units
+#String names should ALWAYS be unique
+
+#There may be multiple networks in a file
+- name: TestNetwork
+  type: NEF
+  set:
+    - name: set-1
+      n-neurons: 100
+      input-dimension: 2
+      neurons:
+        # LIF: dV/dt = aV + b; tref = refractory time
+        lif:
+          - name: n-lif-0
+            type: LIF
+            id: 0
+            a: 10
+            b: 20
+            tref: 0.001
+          - name: n-lif-1
+            type: LIF
+            id: 1
+            a: 10
+            b: 20
+            tref: 0.001
+        # QUAD: dV/dt = aV^2 + bV + c
+        quad:
+          - name: n-quad-0
+            type: QUAD
+            id: 0
+            a: 10
+            b: 20
+            c: 20
+        # DYN: dV/dt = arbitrary-nonlinear-func(V)
+        # Will use a lookup table for the dynamical system
+        dyn-1var:
+          - name: n-dyn-0
+            type: DYN
+            var: var-hh-1
+            id: 0
+        # DYN: dV/dt = arbitrary-nonlinear-func(dx,dy)
+        # dx = a-n-f(V), dy = a-n-f(V)
+        # Will use a lookup table for the dynamical system
+        dyn-2var:
+          - name: n-dyn-0
+            type: DYN
+            var: var-hh-1
+            id: 0
+      #NOTE TODO : This tag is under construction. Ignore it for now.
+      connected-to:
+        - name: set-2
+          how: all-to-all
+        - name: set-3
+          how: decode
+
