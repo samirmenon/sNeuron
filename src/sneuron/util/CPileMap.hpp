@@ -28,8 +28,6 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #define CPILEMAP_HPP_
 
 
-#include <sneuron/WbcDataTypes.hpp>
-
 #include <cassert>
 #include <map>
 #include <stdexcept>
@@ -68,9 +66,9 @@ protected:
 
     SPMNode()
     {
-      data_=W_NULL;
-      id_=W_NULL;
-      next_=W_NULL;
+      data_=NULL;
+      id_=NULL;
+      next_=NULL;
     }
   };
 
@@ -80,7 +78,7 @@ protected:
   SPMNode<Idx,T> *head_;
   std::map<Idx, SPMNode<Idx,T>*> map_;
 
-  wUInt size_;
+  unsigned int size_;
 
 public:
   /***
@@ -107,7 +105,7 @@ public:
    * Constructor : Resets the pilemap.
    */
   CPileMap()
-  { head_ = W_NULL; map_.clear(); size_ = 0; }
+  { head_ = NULL; map_.clear(); size_ = 0; }
 
   /***
    * Copy-Constructor : Does a deep copy of the pilemap to
@@ -142,7 +140,7 @@ public:
    *
    * Starts at 0
    */
-  virtual T* at(const wUInt & arg_idx);
+  virtual T* at(const unsigned int & arg_idx);
 
   /***
    * Returns the element referenced by the index
@@ -158,7 +156,7 @@ public:
    *
    * Starts at 0
    */
-  virtual const T* at_const(const wUInt & arg_idx);
+  virtual const T* at_const(const unsigned int & arg_idx);
 
   /***
    * Returns a const pointer to the element referenced by the index
@@ -182,7 +180,7 @@ public:
   /***
    * Returns the size of the pile
    */
-  virtual inline wUInt size(){ return size_; }
+  virtual inline unsigned int size(){ return size_; }
 
   /***
    * Clears all elements from the list
@@ -197,15 +195,15 @@ bool CPileMap<Idx,T>::deepCopy(CPileMap<Idx,T>* arg_pmap)
 
   /**Set the current pilemap to the new pilemap**/
   if(0 == arg_pmap->size())
-  { head_ = W_NULL; map_.clear(); size_ = 0; }
+  { head_ = NULL; map_.clear(); size_ = 0; }
   else
   {
     arg_pmap->resetIterator();
-    while(arg_pmap->iterator_!=W_NULL)
+    while(arg_pmap->iterator_!=NULL)
     {
       T* tmp = create(*(arg_pmap->iterator_->id_),
       *(arg_pmap->iterator_->data_));
-      if(W_NULL == tmp)
+      if(NULL == tmp)
       {
         printf("\nCPileMap<Idx,T>::CPileMap(const CPileMap<Idx,T>& arg_pmap) : ");
         printf("ERROR : Copy constructor failed. Resetting pilemap.");
@@ -224,22 +222,22 @@ CPileMap<Idx,T>::~CPileMap()
 {
   SPMNode<Idx,T> *t, *t2;
   t = head_;
-  if(W_NULL!=t)
+  if(NULL!=t)
   { t2 = head_->next_;  }
-  while(W_NULL!=t)
+  while(NULL!=t)
   {
-    if(W_NULL!=t->data_)
+    if(NULL!=t->data_)
     { delete t->data_;  }
-    if(W_NULL!=t->id_)
+    if(NULL!=t->id_)
     { delete t->id_;  }
     delete t;
 
     t = t2;
-    if(W_NULL!=t)
+    if(NULL!=t)
     { t2 = t->next_;  }
   }
 
-  head_ = W_NULL;
+  head_ = NULL;
   map_.clear();
   size_ = 0;
 }
@@ -249,8 +247,8 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx)
 {
   SPMNode<Idx,T> * tmp = new SPMNode<Idx,T>();
 
-  if(W_NULL==tmp) //Memory not allocated
-  { return W_NULL; }
+  if(NULL==tmp) //Memory not allocated
+  { return NULL; }
 
   //Make sure the idx hasn't already been registered.
   if(map_.find(arg_idx) != map_.end())
@@ -258,14 +256,14 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx)
 #ifdef W_TESTING
     printf("\nCPileMap<Idx,T>::create() ERROR : Idx exists. Tried to add duplicate entry");
 #endif
-    return W_NULL;
+    return NULL;
   }
 
   tmp->data_ = new T();
   tmp->id_ = new Idx(arg_idx);
   tmp->next_ = head_;
   head_ = tmp;
-  tmp = W_NULL;
+  tmp = NULL;
   size_++;
 
   map_.insert( std::pair<Idx, SPMNode<Idx,T> *>(arg_idx, head_) );
@@ -278,8 +276,8 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx, const T& arg_t)
 {
   SPMNode<Idx,T> * tmp = new SPMNode<Idx,T>();
 
-  if(W_NULL==tmp) //Memory not allocated
-  { return W_NULL; }
+  if(NULL==tmp) //Memory not allocated
+  { return NULL; }
 
   //Make sure the idx hasn't already been registered.
   if(map_.find(arg_idx) != map_.end())
@@ -287,14 +285,14 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx, const T& arg_t)
 #ifdef W_TESTING
     printf("\nCPileMap<Idx,T>::create() ERROR : Idx exists. Tried to add duplicate entry");
 #endif
-    return W_NULL;
+    return NULL;
   }
 
   tmp->data_ = new T(arg_t);
   tmp->id_ = new Idx(arg_idx);
   tmp->next_ = head_;
   head_ = tmp;
-  tmp = W_NULL;
+  tmp = NULL;
   size_++;
 
   map_.insert( std::pair<Idx, SPMNode<Idx,T> *>(arg_idx, head_) );
@@ -303,26 +301,26 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx, const T& arg_t)
 }
 
 template <typename Idx, typename T>
-T* CPileMap<Idx,T>::at(const wUInt & arg_idx)
+T* CPileMap<Idx,T>::at(const unsigned int & arg_idx)
 {
-  if(W_NULL==head_)
-  { return W_NULL;  }
+  if(NULL==head_)
+  { return NULL;  }
   else
   {
     if(arg_idx > size_)
-    { return W_NULL; }
+    { return NULL; }
     SPMNode<Idx,T> * t = head_;
 
-    for(wUInt i=0; i<arg_idx; ++i)
+    for(unsigned int i=0; i<arg_idx; ++i)
     {
       assert(i<=size_);
 
-      if(W_NULL==t)
-      { return W_NULL;  }
+      if(NULL==t)
+      { return NULL;  }
       t = t->next_;
     }
-    if(W_NULL==t)
-    { return W_NULL;  }
+    if(NULL==t)
+    { return NULL;  }
 
     return t->data_;
   }
@@ -331,28 +329,28 @@ T* CPileMap<Idx,T>::at(const wUInt & arg_idx)
 template <typename Idx, typename T>
 T* CPileMap<Idx,T>::at(const Idx & arg_idx)
 {
-  if(W_NULL==head_)
-  { return W_NULL;  }
+  if(NULL==head_)
+  { return NULL;  }
   else
   {
     try
     {
       if(map_.find(arg_idx) == map_.end())
       {
-        return W_NULL;
+        return NULL;
       }
 
       SPMNode<Idx,T> * t = map_[arg_idx];
 
-      if(W_NULL==t)
-      { return W_NULL;  }
+      if(NULL==t)
+      { return NULL;  }
       else
       { return t->data_;  }
     }
     catch(std::exception &e)
     {
       //TODO : print something
-      return W_NULL;
+      return NULL;
     }
   }
 }
@@ -360,7 +358,7 @@ T* CPileMap<Idx,T>::at(const Idx & arg_idx)
 
 
 template <typename Idx, typename T>
-const T* CPileMap<Idx,T>::at_const(const wUInt & arg_idx)
+const T* CPileMap<Idx,T>::at_const(const unsigned int & arg_idx)
 { return (const T*) at(arg_idx);  }
 
 template <typename Idx, typename T>
@@ -371,7 +369,7 @@ const T* CPileMap<Idx,T>::at_const(const Idx & arg_idx)
 template <typename Idx, typename T>
 bool CPileMap<Idx,T>::erase(T* arg_t)
 {
-  if((W_NULL==head_) || (W_NULL==arg_t))
+  if((NULL==head_) || (NULL==arg_t))
   { return false;  }
 
   SPMNode<Idx,T> * t, *tpre;
@@ -382,10 +380,10 @@ bool CPileMap<Idx,T>::erase(T* arg_t)
     t = head_;
     head_ = head_->next_;
 
-    if(W_NULL!= t->data_)
+    if(NULL!= t->data_)
     {
       delete t->data_;
-      if(W_NULL!= t->id_)
+      if(NULL!= t->id_)
       {
         map_.erase(*(t->id_));
         delete t->id_;
@@ -395,7 +393,7 @@ bool CPileMap<Idx,T>::erase(T* arg_t)
       return true; // Deleted head.
     }
 
-    return false;//Head was W_NULL --> Error condition.
+    return false;//Head was NULL --> Error condition.
   }
   else
   {
@@ -404,15 +402,15 @@ bool CPileMap<Idx,T>::erase(T* arg_t)
     t = head_->next_;
 
     //Find the node
-    while(W_NULL!=t)
+    while(NULL!=t)
     {
       if(t->data_ == arg_t)
       {
         tpre->next_ = t->next_;
-        if(W_NULL!= t->data_)
+        if(NULL!= t->data_)
         {
           delete t->data_;
-          if(W_NULL!= t->id_)
+          if(NULL!= t->id_)
           {
             map_.erase(*(t->id_));
             delete t->id_;
@@ -422,7 +420,7 @@ bool CPileMap<Idx,T>::erase(T* arg_t)
           return true; // Deleted node.
         }
         else
-        { return false; }//Node to delete was W_NULL --> Error condition.
+        { return false; }//Node to delete was NULL --> Error condition.
       }
       tpre = t;
       t = t->next_;
@@ -436,7 +434,7 @@ bool CPileMap<Idx,T>::erase(T* arg_t)
 template <typename Idx, typename T>
 bool CPileMap<Idx,T>::erase(const Idx& arg_idx)
 {
-  if(W_NULL==head_)
+  if(NULL==head_)
   { return false;  }
 
   //Make sure the node exists
@@ -457,10 +455,10 @@ bool CPileMap<Idx,T>::erase(const Idx& arg_idx)
     t = head_;
     head_ = head_->next_;
 
-    if(W_NULL!= t->data_)
+    if(NULL!= t->data_)
     {
       delete t->data_;
-      if(W_NULL!= t->id_)
+      if(NULL!= t->id_)
       { delete t->id_;  }
       size_--;
       map_.erase(arg_idx);
@@ -468,7 +466,7 @@ bool CPileMap<Idx,T>::erase(const Idx& arg_idx)
       return true; // Deleted head.
     }
 
-    return false;//Head was W_NULL --> Error condition.
+    return false;//Head was NULL --> Error condition.
   }
   else
   {
@@ -477,15 +475,15 @@ bool CPileMap<Idx,T>::erase(const Idx& arg_idx)
     t = head_->next_;
 
     //Find the node
-    while(W_NULL!=t)
+    while(NULL!=t)
     {
       if(t->data_ == node->data_)
       {
         tpre->next_ = t->next_;
-        if(W_NULL!= t->data_)
+        if(NULL!= t->data_)
         {
           delete t->data_;
-          if(W_NULL!= t->id_)
+          if(NULL!= t->id_)
           { delete t->id_;  }
           size_--;
           map_.erase(arg_idx);
@@ -493,7 +491,7 @@ bool CPileMap<Idx,T>::erase(const Idx& arg_idx)
           return true; // Deleted node.
         }
         else
-        { return false; }//Node to delete was W_NULL --> Error condition.
+        { return false; }//Node to delete was NULL --> Error condition.
       }
       tpre = t;
       t = t->next_;
@@ -508,7 +506,7 @@ bool CPileMap<Idx,T>::clear()
   SPMNode<Idx,T> *tpre;
   tpre = head_;
 
-  if(tpre == W_NULL)
+  if(tpre == NULL)
   {
     size_=0;
     return true;
@@ -516,16 +514,16 @@ bool CPileMap<Idx,T>::clear()
 
   head_ = head_->next_;
 
-  while(W_NULL!=tpre)
+  while(NULL!=tpre)
   {
-    if(W_NULL!=tpre->data_)
+    if(NULL!=tpre->data_)
     { delete tpre->data_; }
-    if(W_NULL!=tpre->id_)
+    if(NULL!=tpre->id_)
     { delete tpre->id_; }
     delete tpre;
 
     tpre = head_;
-    if(W_NULL==tpre)//Reached the end.
+    if(NULL==tpre)//Reached the end.
     { break; }
     head_ = head_->next_;
   }
