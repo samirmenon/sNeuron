@@ -34,9 +34,9 @@ Busylizzy. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CDATABASE_HPP_
 #define CDATABASE_HPP_
 
-#include <wbc/util/CDynamicTypeBase.hpp>
+#include <sneuron/util/CDynamicTypeBase.hpp>
 
-namespace wbc_util
+namespace sneuron_util
 {
   /** A Database is a singleton object that implements:
    *
@@ -66,7 +66,7 @@ namespace wbc_util
   public:
     /** Support for dynamic type instantiation */
     bool registerType(const std::string& arg_type,
-        wbc_util::CDynamicTypeBase& arg_dyn_type_creator);
+        sneuron_util::CDynamicTypeBase& arg_dyn_type_creator);
 
     bool getObjectForType(const std::string & arg_type,
         void*& ret_object);
@@ -76,7 +76,7 @@ namespace wbc_util
 
   private:
     /** A map to store the various dynamic types */
-    std::map<std::string,wbc_util::CDynamicTypeBase*> typemap_;
+    std::map<std::string,sneuron_util::CDynamicTypeBase*> typemap_;
 
     //*****************************************************************
     //                      Singleton Code

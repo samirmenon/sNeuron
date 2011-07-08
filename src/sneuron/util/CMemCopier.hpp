@@ -30,7 +30,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string.h>
 
-namespace wbc_util
+namespace sneuron_util
 {
 
 /***

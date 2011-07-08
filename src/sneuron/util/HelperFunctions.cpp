@@ -24,7 +24,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
  *  Copyright (C) 2010, Samir Menon <smenon@stanford.edu>
  */
 
-#include <wbc/util/HelperFunctions.hpp>
+#include <sneuron/util/HelperFunctions.hpp>
 
 #include <string>
 #include <sstream>
@@ -35,7 +35,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #endif
 
-namespace wbc_util
+namespace sneuron_util
 {
 
   unsigned int countNumbersInString(const char* ss)

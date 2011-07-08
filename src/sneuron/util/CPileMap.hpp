@@ -28,7 +28,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #define CPILEMAP_HPP_
 
 
-#include <wbc/WbcDataTypes.hpp>
+#include <sneuron/WbcDataTypes.hpp>
 
 #include <cassert>
 #include <map>
@@ -36,7 +36,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 
-namespace wbc
+namespace sneuron
 {
 
 /***

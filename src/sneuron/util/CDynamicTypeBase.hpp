@@ -27,7 +27,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CDYNAMICTYPEBASE_HPP_
 #define CDYNAMICTYPEBASE_HPP_
 
-namespace wbc_util
+namespace sneuron_util
 {
   /** To support string inputs for dynamic object allocation,
    * subclass CDynamicTypeBase and implement the createObject()

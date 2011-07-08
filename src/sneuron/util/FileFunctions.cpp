@@ -30,12 +30,12 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 
 #include "FileFunctions.hpp"
 
-#include <wbc/WbcDataTypes.hpp>
+#include <sneuron/WbcDataTypes.hpp>
 
 using namespace std;
-using namespace wbc;
+using namespace sneuron;
 
-namespace wbc_util
+namespace sneuron_util
 {
 
   bool readEigenVecFromFile(Eigen::VectorXi & arg_vec,

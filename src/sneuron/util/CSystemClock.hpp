@@ -30,9 +30,9 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 #include <sys/time.h>
 
-#include <wbc/WbcDataTypes.hpp>
+#include <sneuron/WbcDataTypes.hpp>
 
-namespace wbc
+namespace sneuron
 {
   typedef wClock NEURON_CLOCK;
 

@@ -36,9 +36,9 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 
 #include <stdio.h>
 
-#include <wbc/util/CPileMap.hpp>
+#include <sneuron/util/CPileMap.hpp>
 
-namespace wbc_util
+namespace sneuron_util
 {
   /** This template class contains a branching structure.
    *
@@ -66,7 +66,7 @@ namespace wbc_util
    *          to organize your (unordered) list of nodes into a tree.
    */
   template <typename TIdx, typename TNode>
-  class CBranchingStructure : public wbc::CPileMap<TIdx,TNode>
+  class CBranchingStructure : public sneuron::CPileMap<TIdx,TNode>
   {
   protected:
     /** The root of the branching structure */
@@ -146,7 +146,7 @@ namespace wbc_util
   deepCopy(CBranchingStructure<TIdx,TNode>* arg_br)
   {//Deep copy.
     bool flag;
-    flag = wbc::CPileMap<TIdx,TNode>::
+    flag = sneuron::CPileMap<TIdx,TNode>::
         deepCopy(arg_br);
     if(true == flag)
     {
@@ -182,7 +182,7 @@ namespace wbc_util
 
     //Add the node.
     TNode* tLnk =
-        wbc::CPileMap<TIdx,TNode>::create(arg_idx,arg_node2add);
+        sneuron::CPileMap<TIdx,TNode>::create(arg_idx,arg_node2add);
 
     if((arg_is_root_) && (root_node_==W_NULL))
     { root_node_ = tLnk;  }
@@ -209,7 +209,7 @@ namespace wbc_util
     }
 
     //Add the node.
-    TNode* tLnk = wbc::CPileMap<TIdx,TNode>::create(arg_idx);
+    TNode* tLnk = sneuron::CPileMap<TIdx,TNode>::create(arg_idx);
 
     if((arg_is_root_) && (W_NULL==root_node_))
     { root_node_ = tLnk;  }
@@ -229,43 +229,43 @@ namespace wbc_util
   {
     //Clear previous links (if any)
 
-    wbc::CPileMap<TIdx,TNode>::resetIterator();
-    while(wbc::CPileMap<TIdx,TNode>::iterator_ != W_NULL)
+    sneuron::CPileMap<TIdx,TNode>::resetIterator();
+    while(sneuron::CPileMap<TIdx,TNode>::iterator_ != W_NULL)
     {
-      TNode* tmp_node = wbc::CPileMap<TIdx,TNode>::iterator_->data_;
+      TNode* tmp_node = sneuron::CPileMap<TIdx,TNode>::iterator_->data_;
       tmp_node->parent_addr_ = W_NULL;
       tmp_node->child_addrs_.clear();
-      wbc::CPileMap<TIdx,TNode>::iterator_ =
-          wbc::CPileMap<TIdx,TNode>::iterator_->next_;
+      sneuron::CPileMap<TIdx,TNode>::iterator_ =
+          sneuron::CPileMap<TIdx,TNode>::iterator_->next_;
     }
 
     //Form the new links
-    wbc::CPileMap<TIdx,TNode>::resetIterator();
-    while(wbc::CPileMap<TIdx,TNode>::iterator_ != W_NULL)
+    sneuron::CPileMap<TIdx,TNode>::resetIterator();
+    while(sneuron::CPileMap<TIdx,TNode>::iterator_ != W_NULL)
     {
-      TNode* tmp_node = wbc::CPileMap<TIdx,TNode>::iterator_->data_;
+      TNode* tmp_node = sneuron::CPileMap<TIdx,TNode>::iterator_->data_;
       //Iterate over all nodes and connect them to their
       //parents
       if(tmp_node == root_node_)
       {//No parents
         has_been_init_ = true;
         //Increment the iterator
-        wbc::CPileMap<TIdx,TNode>::iterator_ =
-            wbc::CPileMap<TIdx,TNode>::iterator_->next_;
+        sneuron::CPileMap<TIdx,TNode>::iterator_ =
+            sneuron::CPileMap<TIdx,TNode>::iterator_->next_;
         continue;
       }
       else
       {
         tmp_node->parent_addr_ =
-            wbc::CPileMap<TIdx,TNode>::at(tmp_node->parent_name_);
+            sneuron::CPileMap<TIdx,TNode>::at(tmp_node->parent_name_);
         if(tmp_node->parent_addr_ == W_NULL)
         {//No parent -- Ignore this node
 #ifdef W_TESTING
           printf("\nCBranchingStructure::linkNodes(): Warning.");
           std::cout<<"Orphan node found: "<<tmp_node->name_<<". Ignoring.";
 #endif
-          wbc::CPileMap<TIdx,TNode>::iterator_ =
-              wbc::CPileMap<TIdx,TNode>::iterator_->next_;
+          sneuron::CPileMap<TIdx,TNode>::iterator_ =
+              sneuron::CPileMap<TIdx,TNode>::iterator_->next_;
           continue;
         }
         tmp_node->parent_addr_->child_addrs_.push_back(tmp_node);
@@ -278,11 +278,11 @@ namespace wbc_util
       }
 
       //Increment the iterator
-      wbc::CPileMap<TIdx,TNode>::iterator_ =
-          wbc::CPileMap<TIdx,TNode>::iterator_->next_;
+      sneuron::CPileMap<TIdx,TNode>::iterator_ =
+          sneuron::CPileMap<TIdx,TNode>::iterator_->next_;
     }//End of while loop
     return has_been_init_;
   }
-}//End of namespace wbc_util
+}//End of namespace sneuron_util
 
 #endif /*CBRANCHINGSTRUCTURE_HPP_*/

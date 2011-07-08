@@ -27,14 +27,14 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CMULTILEVELPILEMAP_HPP_
 #define CMULTILEVELPILEMAP_HPP_
 
-#include <wbc/util/CPileMap.hpp>
+#include <sneuron/util/CPileMap.hpp>
 
 #include <iostream>
 #include <vector>
 #include <list>
 #include <stdexcept>
 
-namespace wbc
+namespace sneuron
 {
 
   /**
@@ -411,6 +411,6 @@ namespace wbc
     return ret;
   }
 
-}//End of namespace wbc_util
+}//End of namespace sneuron_util
 
 #endif /*CMULTILEVELPILEMAP_HPP_*/

@@ -36,7 +36,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
  * NOTE TODO : Feel free to add other useful functions...
  */
 
-namespace wbc_util
+namespace sneuron_util
 {
   unsigned int countNumbersInString(const char* str);
 

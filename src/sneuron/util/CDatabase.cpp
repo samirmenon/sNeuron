@@ -29,11 +29,11 @@ Busylizzy. If not, see <http://www.gnu.org/licenses/>.
  *  Author: Samir Menon <smenon@stanford.edu>
  */
 
-#include <wbc/database/CDatabase.hpp>
+#include <sneuron/database/CDatabase.hpp>
 
 #include <stdexcept>
 
-namespace wbc_util
+namespace sneuron_util
 {
   //*****************************************************************
   //                  Dynamic Typing Code

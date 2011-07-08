@@ -26,7 +26,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 
 #include "CSystemClock.hpp"
 
-namespace wbc
+namespace sneuron
 {
   CSystemClock* CSystemClock::pinstance = NULL;// initialize pointer
 

@@ -32,7 +32,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 
 #include <Eigen/Core>
 
-namespace wbc_util
+namespace sneuron_util
 {
 
 /** Function reads an unsigned integer vector from a file.
