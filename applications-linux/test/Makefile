@@ -24,22 +24,28 @@ CHAI_LIB = -lchai3d
 CHAI_DEFS = -D_LINUX \
             -W -Wno-deprecated -Wno-unused-parameter -L/usr/lib \
 					  -lpthread -lrt -lGL -lGLU -lglut
-             
+
+#3rd party lib : yaml-cpp (local install)
+YAML_INC_DIR = ../../3rdparty/yaml-cpp/include/
+YAML_DBG_LIB_DIR = -L$(YAML_INC_DIR)../build/ -Wl,--rpath=$(YAML_INC_DIR)../build/
+YAML_REL_LIB_DIR = -L$(YAML_INC_DIR)../build/ -Wl,--rpath=$(YAML_INC_DIR)../build/
+YAML_LIB = -lyaml-cpp
+
 #3rd party lib: Uncomment these when using opencv
 #-lcxcore -lcv -lhighgui -lcvaux -lml
 
 ############################# INCLUDE AND LINK OPTIONS ############################
 #Collate all the include directiories
-INCLUDEDIRS = -I$(SN_INC_DIR) -I$(EIGEN_INC_DIR) -I$(CHAI_INC_DIR)
+INCLUDEDIRS = -I$(SN_INC_DIR) -I$(EIGEN_INC_DIR) -I$(CHAI_INC_DIR) -I$(YAML_INC_DIR)
 
 #Combine all libs to be linked
 ###Debug
-LINK_DBG_DIRS = $(SN_DBG_LIB_DIR) $(CHAI_DBG_LIB_DIR)
-LINK_LIBS_DBG = $(SN_LIB) $(CHAI_LIB)
+LINK_DBG_DIRS = $(SN_DBG_LIB_DIR) $(CHAI_DBG_LIB_DIR) $(YAML_DBG_LIB_DIR)
+LINK_LIBS_DBG = $(SN_LIB) $(CHAI_LIB) $(YAML_LIB)
 
 ###Release
-LINK_REL_DIRS = $(SN_REL_LIB_DIR) $(CHAI_REL_LIB_DIR)
-LINK_LIBS_REL = $(SN_LIB) $(CHAI_LIB)
+LINK_REL_DIRS = $(SN_REL_LIB_DIR) $(CHAI_REL_LIB_DIR) $(YAML_REL_LIB_DIR)
+LINK_LIBS_REL = $(SN_LIB) $(CHAI_LIB) $(YAML_LIB)
 
 #Combine other defs
 DEFS_DBG = $(SN_DEFS_DBG) $(CHAI_DEFS)
@@ -50,8 +56,8 @@ DBGFLAGS = -Wall -g -ggdb -pg -O0 $(INCLUDEDIRS) \
            -fPIC $(LINK_DBG_DIRS) $(LINK_LIBS_DBG) \
            $(DEFS_DBG)
 RELFLAGS = -Wall -O3 $(INCLUDEDIRS) \
-           -fPIC $(LINK_FIN_DIRS) $(LINK_LIBS_FIN) \
-           $(DEFS_FIN) 
+           -fPIC $(LINK_REL_DIRS) $(LINK_LIBS_REL) \
+           $(DEFS_REL) 
 
 ############################ SOURCE FILES ############################
 #The application source(s)
@@ -66,7 +72,7 @@ TARGET = sneuron_test
 all: 
 	$(CXX) $(DBGFLAGS) -o $(TARGET) $(SOURCES)
 
-final: 
+release:
 	$(CXX) $(RELFLAGS) -o $(TARGET) $(SOURCES)
 
 debug:

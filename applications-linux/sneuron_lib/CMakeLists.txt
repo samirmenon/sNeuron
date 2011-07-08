@@ -13,7 +13,8 @@ project(sneuron)
 #Set Include directory
 SET(SN_INC_DIR ../../src/)
 SET(EIGEN_INC_DIR ../../3rdparty/eigen3.0.1/)
-INCLUDE_DIRECTORIES(${SN_INC_DIR} ${EIGEN_INC_DIR})
+SET(YAML_INC_DIR ../../3rdparty/yaml-cpp/include/)
+INCLUDE_DIRECTORIES(${SN_INC_DIR} ${EIGEN_INC_DIR} ${YAML_INC_DIR})
 
 #Set all the sources required for the library
 SET(PAR ${SN_INC_DIR}sneuron/parser/syaml/CSParserYaml.cpp

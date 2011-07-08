@@ -7,7 +7,10 @@
 
 #include "CSParserYaml.hpp"
 
+#include <yaml-cpp/yaml.h>
+
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 
 namespace sneuron
@@ -30,6 +33,14 @@ namespace sneuron
     bool flag;
     try
     {
+      std::ifstream fin(arg_file.c_str());
+      YAML::Parser parser(fin);
+
+      YAML::Node doc;
+      flag = parser.GetNextDocument(doc);
+      if(false == flag)
+      { throw(std::runtime_error("Could not read any document in the yaml test file"));  }
+
       /** Add code to read network names from a file here */
       return true;
     }
