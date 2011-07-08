@@ -70,7 +70,7 @@ int main(int argc, char** argv)
           <<" "
           <<sneuron::CSystemClock::get_clock()->get_sim_time()
           <<"]";
-      sneuron_test::test_clock(id);
+      sneuron_test::test_parser(id);
     }
     ++id;
 
