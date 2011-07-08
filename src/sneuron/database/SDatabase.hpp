@@ -61,6 +61,14 @@ namespace sneuron
      * Manages the data and enables pointer based access. */
     sneuron::CPileMap<std::string, SNeuralNetwork> nn_;
 
+    /** A data structure to store all the spikes of the neurons
+     * -- Indexed by the uid
+     * -- Contain the last n-spike times of the neurons (simulated time)
+     *
+     * NOTE TODO :
+     */
+    //sneuron::SSpikeData spikes_;
+
     /** A pile containing the ANN static information.
      * Manages the data and enables pointer based access. */
     sneuron::CPileMap<std::string, SANN> ann_;

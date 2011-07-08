@@ -20,7 +20,7 @@ You should have received a copy of the GNU Lesser General Public
 License and a copy of the GNU General Public License along with
 SNeuron. If not, see <http://www.gnu.org/licenses/>.
  */
-/* \file SNeuralNetwork.hpp
+/* \file SNeuronSet.hpp
  *
  *  Created on: Jul 7, 2011
  *
@@ -29,26 +29,38 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
  *  Author: Samir Menon <smenon@stanford.edu>
  */
 
-#ifndef SNEURALNETWORK_HPP_
-#define SNEURALNETWORK_HPP_
+#ifndef SNEURONSET_HPP_
+#define SNEURONSET_HPP_
 
-#include <sneuron/database/SNeuronSet.hpp>
+#include <sneuron/database/SNeuron.hpp>
 #include <sneuron/database/SObject.hpp>
 #include <sneuron/util/CPileMap.hpp>
+#include <sneuron/SNDataTypes.hpp>
+
+#include <Eigen/Core>
 
 namespace sneuron
 {
-  /** This data structure contains a neural network definition */
-  class SNeuralNetwork : public sneuron::SObject
+  /** This is the data required to define a set of neurons */
+  class SNeuronSet : public sneuron::SObject
   {
   public:
-    /** All the sets contained in the network */
-    sneuron::CPileMap<std::string, SNeuronSet> sets_;
+    snUInt n_neurons_;
+    snUInt input_dim_;
+    sneuron::CPileMap<std::string, SNeuron> neurons_;
+
+    /** These are used to convert an input analog vector into
+     * input currents for each neuron
+     *
+     * input_currents_ = alpha.array() * (analog_input_ * encoders_).array() + beta_.array();
+     * */
+    Eigen::MatrixXd encoders_;
+    Eigen::VectorXd input_currents_, alpha_, beta_;
 
     /** Default constructor : Does nothing */
-    SNeuralNetwork(){}
+    SNeuronSet(){}
     /** Default destructor : Does nothing */
-    virtual ~SNeuralNetwork(){}
+    virtual ~SNeuronSet(){}
 
     /* Inherited variables:
     std::string name_;
@@ -58,4 +70,4 @@ namespace sneuron
 
 }
 
-#endif /* SNEURALNETWORK_HPP_ */
+#endif /* SNEURONSET_HPP_ */
