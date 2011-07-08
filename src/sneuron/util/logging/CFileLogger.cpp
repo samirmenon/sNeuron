@@ -27,44 +27,44 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
  *  Author: Samir Menon <smenon@stanford.edu>
  */
 
-#include <cassert>
+#include <sneuron/util/logging/CFileLogger.hpp>
+#include <sneuron/util/CSystemClock.hpp>
 
-#include <sneuron/engine/logging/CFileLogger.hpp>
-#include <sneuron/engine/clock/CSystemClock.hpp>
+#include <cassert>
 
 using namespace std;
 
 namespace sneuron
 {
-CFileLogger::CFileLogger()
-{
-}
+  CFileLogger::CFileLogger()
+  {
+  }
 
-CFileLogger::~CFileLogger()
-{		
-}
+  CFileLogger::~CFileLogger()
+  {
+  }
 
-bool CFileLogger::init(const string & arg_outfile)
-{
-  logfile_name_ = arg_outfile;
-  log_.open(logfile_name_.c_str(), ios::app);
-  if(log_.fail()){  return false; }
-  return true;
-}
+  bool CFileLogger::init(const string & arg_outfile)
+  {
+    logfile_name_ = arg_outfile;
+    log_.open(logfile_name_.c_str(), ios::app);
+    if(log_.fail()){  return false; }
+    return true;
+  }
 
-void CFileLogger::log_spike(const snInt & arg_neuron_id)
-{
-  assert(!log_.fail());
-  CSystemClock *clock = CSystemClock::get_clock();
-  log_<<"\n"<<clock->get_sim_time()<<" "<<arg_neuron_id;
-}
+  void CFileLogger::log_spike(const snInt & arg_neuron_id)
+  {
+    assert(!log_.fail());
+    CSystemClock *clock = CSystemClock::get_clock();
+    log_<<"\n"<<clock->get_sim_time()<<" "<<arg_neuron_id;
+  }
 
-void CFileLogger::log_data(const snInt & arg_neuron_id, const string &arg_string_to_log)
-{
-  assert(!log_.fail());
-  CSystemClock *clock = CSystemClock::get_clock();
-  log_<<"\n"<<clock->get_sim_time()<<" "<<arg_neuron_id<<"	"<<arg_string_to_log;
-}
+  void CFileLogger::log_data(const snInt & arg_neuron_id, const string &arg_string_to_log)
+  {
+    assert(!log_.fail());
+    CSystemClock *clock = CSystemClock::get_clock();
+    log_<<"\n"<<clock->get_sim_time()<<" "<<arg_neuron_id<<"	"<<arg_string_to_log;
+  }
 
 
 }

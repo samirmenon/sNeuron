@@ -61,7 +61,7 @@ namespace sneuron
     }
   }
 
-  wFloat CSystemClock::compute_t_diff(timeval &t_start)
+  float CSystemClock::compute_t_diff(timeval &t_start)
   {
     gettimeofday(&t_tick,NULL);
     //Code snippet from: http://www.gnu.org/software/libtool/manual/libc/Elapsed-Time.html
@@ -81,10 +81,10 @@ namespace sneuron
     t_diff.tv_sec = t_tick.tv_sec - t_start.tv_sec;
     t_diff.tv_usec = t_tick.tv_usec - t_start.tv_usec;
     //End code snippet
-    return (wFloat)t_diff.tv_sec+((wFloat)t_diff.tv_usec/1000000.00);
+    return (float)t_diff.tv_sec+((float)t_diff.tv_usec/1000000.00);
   }
 
-  wFloat CSystemClock::get_sys_time()
+  float CSystemClock::get_sys_time()
   {
     return compute_t_diff(t_start_);
   }

@@ -34,15 +34,16 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 #include <sneuron/util/FileFunctions.hpp>
 #include <sneuron/math/MathFunctions.hpp>
 
+#include <Eigen/Core>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include <stdexcept>
 #include <fstream>
+#include <iostream>
 #include <ctime>
-
-#include <Eigen/Array>
 
 
 namespace sneuron
@@ -80,7 +81,7 @@ namespace sneuron
     bool flag;
     try
     {
-      flag = sneuron::readEigenMatFromFile(image_,arg_rows,arg_cols,arg_file);
+      flag = sneuron_util::readEigenMatFromFile(image_,arg_rows,arg_cols,arg_file);
       if(false==flag)
       { throw(std::runtime_error("Could not load image"));  }
 
@@ -102,9 +103,9 @@ namespace sneuron
           min_px_scaled_ = arg_min_px;
         }
 
-        image_.cwise() -= image_.minCoeff(); //Get to zero
+        image_.array() -= image_.minCoeff(); //Get to zero
         image_ *= ( (max_px_scaled_ - min_px_scaled_) / (image_.maxCoeff()) ); //Scale
-        image_.cwise() += min_px_scaled_; //Get to new min px
+        image_.array() += min_px_scaled_; //Get to new min px
       }
       else
       {
@@ -121,7 +122,7 @@ namespace sneuron
       has_been_init_ = true;
     }
     catch(std::exception& ee)
-    { std::cerr<<"CImageAscii::loadImage() : "<<ee.what(); }
+    { std::cout<<"CImageAscii::loadImage() : "<<ee.what(); }
     return has_been_init_;
   }
 
@@ -206,7 +207,7 @@ namespace sneuron
     }
     catch(std::exception& ee)
     {
-      std::cerr<<"CImageAscii::genSubImage() : "<<ee.what();
+      std::cout<<"CImageAscii::genSubImage() : "<<ee.what();
       return SN_NULL;
     }
 

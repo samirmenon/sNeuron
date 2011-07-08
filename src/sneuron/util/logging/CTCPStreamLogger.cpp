@@ -27,69 +27,70 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
  *  Author: Samir Menon <smenon@stanford.edu>
  */
 
+#include <sneuron/util/logging/CTCPStreamLogger.hpp>
+#include <sneuron/util/CSystemClock.hpp>
+
 #include <stdio.h>
 #include <string.h>
 
-#include <sneuron/engine/logging/CTCPStreamLogger.hpp>
-#include <sneuron/engine/clock/CSystemClock.hpp>
 
 namespace sneuron
 {
 
 
-snBool CTCPStreamLogger::init(const char* arg_outip, const snInt &arg_outport)
-{		
-	snBool flag = false;
-  //Create a socket
-	sockfd = socket(AF_INET, SOCK_STREAM, 0); //TCP synchronous commn (for now)
-  if (sockfd < 0)
-  {	printf("ERROR opening socket");	goto END; }
+  snBool CTCPStreamLogger::init(const char* arg_outip, const snInt &arg_outport)
+  {
+    snBool flag = false;
+    //Create a socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0); //TCP synchronous commn (for now)
+    if (sockfd < 0)
+    {	printf("ERROR opening socket");	goto END; }
 
-  //Retrieves host information corresponding to a host name from a host database
-  serverIpHost = gethostbyname(arg_outip); //Ip used here
-  if (serverIpHost == NULL)
-  {	printf("Could not obtain host name");	goto END; }
+    //Retrieves host information corresponding to a host name from a host database
+    serverIpHost = gethostbyname(arg_outip); //Ip used here
+    if (serverIpHost == NULL)
+    {	printf("Could not obtain host name");	goto END; }
 
 
-  memset((char *) &socket_address, '\0', sizeof(socket_address));
-  socket_address.sin_family = AF_INET; //TCP
-  memmove((char *)serverIpHost->h_addr, (char *)&socket_address.sin_addr.s_addr,
+    memset((char *) &socket_address, '\0', sizeof(socket_address));
+    socket_address.sin_family = AF_INET; //TCP
+    memmove((char *)serverIpHost->h_addr, (char *)&socket_address.sin_addr.s_addr,
         serverIpHost->h_length);
-  socket_address.sin_port = htons(arg_outport); //Port: to TCP/IP byte order(big-endian)
+    socket_address.sin_port = htons(arg_outport); //Port: to TCP/IP byte order(big-endian)
 
-  if(connect(sockfd,(sockaddr*)&socket_address,sizeof(socket_address)) < 0)
-  {	printf("ERROR connecting"); goto END;	}
+    if(connect(sockfd,(sockaddr*)&socket_address,sizeof(socket_address)) < 0)
+    {	printf("ERROR connecting"); goto END;	}
 
-  flag = true;
-END:
-  return flag;
-}
+    flag = true;
+    END:
+    return flag;
+  }
 
-CTCPStreamLogger::~CTCPStreamLogger()
-{
-	close(sockfd);
-}
+  CTCPStreamLogger::~CTCPStreamLogger()
+  {
+    close(sockfd);
+  }
 
-void CTCPStreamLogger::log_spike(const snInt &arg_neuron_id)
-{
-  snLogType tmp[2];
-  snInt bytes_written;
+  void CTCPStreamLogger::log_spike(const snInt &arg_neuron_id)
+  {
+    snLogType tmp[2];
+    snInt bytes_written;
 
-  snChar log_buf[2*sizeof(snLogType)];//Buffer to be logged
+    snChar log_buf[2*sizeof(snLogType)];//Buffer to be logged
 
-  //NOTE TODO Serialize this
-  memset((snChar *) log_buf, '\0', SNEURON_LOG_BUF_LEN);
+    //NOTE TODO Serialize this
+    memset((snChar *) log_buf, '\0', SNEURON_LOG_BUF_LEN);
 
-  tmp[0] = (snLogType) arg_neuron_id; //Neuron id
-  CSystemClock *clock = CSystemClock::get_clock();
-  tmp[1] = (snLogType) clock->get_sim_time(); //Spike time
+    tmp[0] = (snLogType) arg_neuron_id; //Neuron id
+    CSystemClock *clock = CSystemClock::get_clock();
+    tmp[1] = (snLogType) clock->get_sim_time(); //Spike time
 
-  memcpy(log_buf,tmp, SNEURON_LOG_BUF_LEN);
+    memcpy(log_buf,tmp, SNEURON_LOG_BUF_LEN);
 
-  bytes_written = write(sockfd,log_buf,SNEURON_LOG_BUF_LEN);
+    bytes_written = write(sockfd,log_buf,SNEURON_LOG_BUF_LEN);
 
-  if (bytes_written < 0)
-  {	printf("LOG : ERROR writing to socket");	}
-}
+    if (bytes_written < 0)
+    {	printf("LOG : ERROR writing to socket");	}
+  }
 
 }

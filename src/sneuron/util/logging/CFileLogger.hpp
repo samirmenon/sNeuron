@@ -30,25 +30,27 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CFILELOGGER_H_
 #define CFILELOGGER_H_
 
+
+#include <sneuron/SNDataTypes.hpp>
+
 #include <fstream>
 #include <string>
-#include <sneuron/SNeuronDataTypes.hpp>
 
 namespace sneuron
 {	
-class CFileLogger
-{
-	std::string logfile_name_;
-	std::ofstream log_;
-public:	
-	CFileLogger();
-	virtual ~CFileLogger();
-	
-	bool init(const std::string & arg_outfile);
+  class CFileLogger
+  {
+    std::string logfile_name_;
+    std::ofstream log_;
+  public:
+    CFileLogger();
+    virtual ~CFileLogger();
 
-	void log_spike(const snInt & arg_neuron_id);
-	void log_data(const snInt & arg_neuron_id, const std::string &arg_string_to_log);
-};
+    bool init(const std::string & arg_outfile);
+
+    void log_spike(const snInt & arg_neuron_id);
+    void log_data(const snInt & arg_neuron_id, const std::string &arg_string_to_log);
+  };
 
 }
 

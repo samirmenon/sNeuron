@@ -32,12 +32,12 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CSLOGVECTOFILE_HPP_
 #define CSLOGVECTOFILE_HPP_
 
+#include <sneuron/SNDataTypes.hpp>
+
 #include <stdio.h>
 #include <vector>
 #include <string>
 
-#include <sneuron/SNeuronDataTypes.hpp>
-#include <sneuron/SConstants.hpp>
 
 namespace sneuron
 {

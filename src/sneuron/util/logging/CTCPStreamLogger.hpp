@@ -30,34 +30,34 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CTCPSTREAMLOGGER_HPP_
 #define CTCPSTREAMLOGGER_HPP_
 
+#include <sneuron/SNDataTypes.hpp>
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <string>
 
-#include <sneuron/SNeuronDataTypes.hpp>
-
 namespace sneuron
 {
 
-typedef double snLogType;
-const snLogType SNEURON_LOG_BUF_LEN = (2*sizeof(snLogType));
+  typedef double snLogType;
+  const snLogType SNEURON_LOG_BUF_LEN = (2*sizeof(snLogType));
 
-class CTCPStreamLogger
-{
-	hostent *serverIpHost;
-	sockaddr_in socket_address;
-	int sockfd; //socket file descriptor
-public:
-	CTCPStreamLogger(){}
-	virtual ~CTCPStreamLogger();
+  class CTCPStreamLogger
+  {
+    hostent *serverIpHost;
+    sockaddr_in socket_address;
+    int sockfd; //socket file descriptor
+  public:
+    CTCPStreamLogger(){}
+    virtual ~CTCPStreamLogger();
 
-	snBool init(const snChar * arg_outip="127.0.0.1",
-            const snInt &arg_outport=8088);
-	
-	void log_spike(const snInt &arg_neuron_id);
-};
+    snBool init(const snChar * arg_outip="127.0.0.1",
+        const snInt &arg_outport=8088);
+
+    void log_spike(const snInt &arg_neuron_id);
+  };
 
 }
 

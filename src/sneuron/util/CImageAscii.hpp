@@ -32,11 +32,11 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 #ifndef CIMAGEASCII_HPP_
 #define CIMAGEASCII_HPP_
 
-#include <string>
+#include <sneuron/SNDataTypes.hpp>
 
 #include <Eigen/Core>
 
-#include <sneuron/SNeuronDataTypes.hpp>
+#include <string>
 
 namespace sneuron
 {

@@ -24,7 +24,7 @@ namespace sneuron
   }
 
   /** Returns a list of the neural networks in the file */
-  virtual bool listNetworksInFile(const std::string& arg_file,
+  bool listNetworksInFile(const std::string& arg_file,
       std::vector<sneuron::string2>& arg_network_name_type)
   {
     bool flag;

@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License and a copy of the GNU General Public License along with
 this file. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 /* \file FileFunctions.cpp
  *
  *  Created on: May 18, 2010
@@ -30,7 +30,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 
 #include "FileFunctions.hpp"
 
-#include <sneuron/WbcDataTypes.hpp>
+#include <sneuron/SNDataTypes.hpp>
 
 using namespace std;
 using namespace sneuron;
@@ -47,17 +47,17 @@ namespace sneuron_util
     if(!ipfile)
     { return false; }
 
-    std::vector<wInt> vec;
+    std::vector<int> vec;
     while (!ipfile.eof())
     {
-      wInt tmp;
+      int tmp;
       ipfile>>tmp;
       vec.push_back(tmp);
     }
 
     //Set the eigen vector's size to be equal to the
     //loaded std::vector. And then copy over the elements.
-    wInt sz = vec.size();
+    int sz = vec.size();
     arg_vec.resize(sz);
     for(int i=0;i<sz;i++)
     { arg_vec[i] = vec.at(i); }
@@ -76,17 +76,17 @@ namespace sneuron_util
     if(!ipfile)
     { return false; }
 
-    //  std::vector<wFloat> vec;
+    //  std::vector<float> vec;
     //  while (!ipfile.eof())
     //  {
-    //    wFloat tmp;
+    //    float tmp;
     //    ipfile>>tmp;
     //    vec.push_back(tmp);
     //  }
 
     //Set the eigen vector's size to be equal to the
     //loaded std::vector. And then copy over the elements.
-    //  wInt sz = vec.size();
+    //  int sz = vec.size();
     //  arg_vec.resize(sz);
     for(int i=0;i<len;i++)
     { ipfile>>arg_vec(i); }
@@ -106,7 +106,7 @@ namespace sneuron_util
 
     //Set the eigen vector's size to be equal to the
     //loaded std::vector. And then copy over the elements.
-    wInt sz = arg_vec.size();
+    int sz = arg_vec.size();
     for(int i=0;i<sz;i++)
     { opfile<< arg_vec[i]<<"\n"; }
 
@@ -135,7 +135,7 @@ namespace sneuron_util
         {
           if(ipfile.eof())
           {throw(std::runtime_error("Given file doesn't have data with specified dimensions")); }
-          wFloat tmp;
+          float tmp;
           ipfile>>tmp;
           arg_mat(i,j) = tmp;
         }

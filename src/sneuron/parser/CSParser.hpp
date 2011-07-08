@@ -33,9 +33,9 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 #define CSPARSER_HPP_
 
 //Data structures passed to the branching template
-#include <sneuron/database/data_structs/SWorld.hpp>
-#include <sneuron/database/data_structs/SNeuralNetwork.hpp>
-#include <sneuron/database/data_structs/SANN.hpp>
+#include <sneuron/database/SWorld.hpp>
+#include <sneuron/database/SNeuralNetwork.hpp>
+#include <sneuron/database/SANN.hpp>
 #include <sneuron/SNDataTypes.hpp>
 
 #include <string>
