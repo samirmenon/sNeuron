@@ -38,7 +38,6 @@ namespace sneuron
     {
       std::ifstream fin(arg_file.c_str());
       YAML::Parser parser(fin);
-
       YAML::Node doc;
       flag = parser.GetNextDocument(doc);
       if(false == flag)
@@ -47,15 +46,13 @@ namespace sneuron
       /**code to read network names from a file here */
       for( unsigned int i=0; i<doc.size(); i++)
       {
-        /* *
-         * Extract names and push into the vector
-         */
+        //Extract names
         sneuron::string2 ss;
         doc[i]["name"] >> ss.str1;
         doc[i]["type"] >> ss.str2;
 
+        //Push into the list of networks
         arg_network_name_type.push_back(ss);
-
       }
       return true;
     }
@@ -68,6 +65,7 @@ namespace sneuron
    */
   void operator >> (const YAML::Node& node, Eigen::VectorXd& v)
   {
+    //Resize the vector to the length of node.
     v.resize(node.size());
     for(unsigned int i=0; i<node.size(); i++)
     {
@@ -101,7 +99,6 @@ namespace sneuron
       node["n-neurons"] >> set.n_neurons_;
       node["input-dimension"] >> set.input_dim_;
       const YAML::Node& neurons = node["neurons"];
-
       const YAML::Node& linear_neurons = neurons["lif"];
       for(unsigned i=0;i<linear_neurons.size();i++)
       {
@@ -121,7 +118,7 @@ namespace sneuron
         //Dynamic cast the new pointer to a type that the yaml parser can process
         SNeuronLinear *tmp;
         tmp = dynamic_cast<SNeuronLinear*>(*s);
-        if(NULL == tmp){}
+        if(NULL == tmp){throw(std::runtime_error("Pointer of SNeuronLinear not created"));}
 
         //Now read in the data from the yaml parser
         linear_neurons[i] >> *tmp;
@@ -130,10 +127,10 @@ namespace sneuron
     catch(std::exception& e)
     { std::cerr<<"\nCSParserYaml::operator >> (YAML node,SNeuronSet) Error : "<<e.what(); }
   }
+
   /**
    * overloading operator ">>" to read network to data structure SNeuralNetwork
    */
-
   void operator >> (const YAML::Node& node, SNeuralNetwork& network)
   {
     try
@@ -141,20 +138,25 @@ namespace sneuron
       node["name"] >> network.name_;
       node["type"] >> network.type_;
       const YAML::Node& pools = node["set"];
+
+      //Loop over all the sets in the network and extract their data
       for(unsigned i=0;i<pools.size();i++)
       {
+        //This variable will store the name of the set being explored
         std::string str;
         pools[i]["name"] >> str;
+
+        //Create a pilemap entry
         SNeuronSet* s = network.sets_.create(str);
         if(NULL==s) { throw(std::runtime_error("Couldn't create an object on the PileMap"));}
-        pools[i] >> *s;
 
+        //Read data into this newly created object
+        pools[i] >> *s;
       }
     }
     catch(std::exception& e)
     { std::cerr<<"\noperator >> (YAML node,SNeuralNetwork) Error : "<<e.what(); }
   }
-
 
   /** Reads in a neural network from the given file. */
   bool CSParserYaml::readNetworkFromFile(const std::string& arg_file,
@@ -171,9 +173,11 @@ namespace sneuron
       YAML::Parser parser(fin);
       YAML::Node doc;
       flag = parser.GetNextDocument(doc);
-
+      //Check for yaml function
       if(false == flag)
       { throw(std::runtime_error("Could not read any document in the yaml test file"));  }
+
+      //found variable is set to true when we find the network with the given name
       bool found=false;
       for(unsigned int i=0; i<doc.size(); i++){
         std::string str;
@@ -181,6 +185,8 @@ namespace sneuron
         if(str==arg_network_name)
         {
           found=true;
+
+          //If found read that network into the passed argument
           doc[i] >> arg_network;
         }
       }
@@ -209,5 +215,4 @@ namespace sneuron
     { std::cerr<<"\nCSParserYaml::listNetworksInFile() Error : "<<e.what(); }
     return false;
   }
-
 }

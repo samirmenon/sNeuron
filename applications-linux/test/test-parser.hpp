@@ -55,7 +55,6 @@ namespace sneuron_test
     try
     {
       sneuron::CSParserYaml parser;
-
       sneuron::SANN ann;
 
       //1. Read in a file
@@ -65,37 +64,40 @@ namespace sneuron_test
       { throw(std::runtime_error("Could not read current working directory"));  }
       else  { std::cout<<"\nTest Result ("<<r_id++<<") Current working directory = "<<infile; }
       infile = + "../../specs/Test/TestCfg.yaml";
-
       std::cout<<"\nTest Result ("<<r_id++<<") Test file is : "<<infile;
 
+      //Test to check listNetworksInFile
       std::vector<sneuron::string2> network_list;
       flag = parser.listNetworksInFile(infile, network_list);
       if(false == flag)
       { throw(std::runtime_error("Could not read list of networks from the test file"));  }
       else  { std::cout<<"\nTest Result ("<<r_id++<<") Read ("<<network_list.size()<<") networks from the test file"; }
 
+     //Test for readNetworkFromFile
       std::vector<sneuron::string2>::iterator it,ite;
-
-
       for(it = network_list.begin(), ite = network_list.end();
           it!=ite; ++it)
       {
         if((*it).str2 == "NEF")
         {
-          //You need to receive every network in a new object.
+          //You need to receive every network in a new object to avoid duplicate map entries
           sneuron::SNeuralNetwork nn;
 
-          //
+          /** Call the function. Pass it the Yaml file, name of network to be read and the object
+           * that recieves it.
+           */
           flag = parser.readNetworkFromFile(infile,(*it).str1, nn);
           if(false == flag)
           { throw(std::runtime_error("Could not read an NEF network from the test file"));  }
           else  { std::cout<<"\nTest Result ("<<r_id++<<") Read ("<<(*it).str1<<") NEF network from the test file"; }
 
-          //
+          /** To check if the network was read correctly. Compare parameters with the test file
+          */
           if(nn.name_!=(*it).str1 || "NEF"!=nn.type_ || 1!=nn.sets_.size())
           { throw(std::runtime_error("Could not parse an NEF network from the test file"));  }
           else
           { std::cout<<"\nTest Result ("<<r_id++<<") Successfully parsed ("<<(*it).str1<<") NEF network from the test file"; }
+        //Add more test function here
         }
 
         else if((*it).str2 == "ANN")
@@ -107,7 +109,6 @@ namespace sneuron_test
 
           /** A bunch of code that checks whether you've correctly read the file */
         }
-
       }
       std::cout<<"\nTest #"<<arg_id<<" : Succeeded.";
     }
