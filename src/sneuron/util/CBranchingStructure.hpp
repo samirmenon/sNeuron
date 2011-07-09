@@ -30,7 +30,7 @@ this file. If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <string>
 
-#ifdef W_TESTING
+#ifdef DEBUG
 #include <iostream>
 #endif
 
@@ -174,7 +174,7 @@ namespace sneuron_util
   {
     if((arg_is_root_)&&(W_NULL!=root_node_))
     {
-#ifdef W_TESTING
+#ifdef DEBUG
       printf("\nCBranchingStructure::create() : Error. Tried to insert a root node when one already exists.");
 #endif
       return W_NULL;
@@ -202,7 +202,7 @@ namespace sneuron_util
   {
     if((arg_is_root_)&&(W_NULL!=root_node_))
     {
-#ifdef W_TESTING
+#ifdef DEBUG
       printf("\nCBranchingStructure::create() : Error. Tried to insert a root node when one already exists.");
 #endif
       return W_NULL;
@@ -260,7 +260,7 @@ namespace sneuron_util
             sneuron::CPileMap<TIdx,TNode>::at(tmp_node->parent_name_);
         if(tmp_node->parent_addr_ == W_NULL)
         {//No parent -- Ignore this node
-#ifdef W_TESTING
+#ifdef DEBUG
           printf("\nCBranchingStructure::linkNodes(): Warning.");
           std::cout<<"Orphan node found: "<<tmp_node->name_<<". Ignoring.";
 #endif
@@ -270,7 +270,7 @@ namespace sneuron_util
         }
         tmp_node->parent_addr_->child_addrs_.push_back(tmp_node);
 
-#ifdef W_TESTING
+#ifdef DEBUG
         std::cout<<"\n\tAdding child "<<tmp_node->name_
         <<" to (parent) "<<tmp_node->parent_addr_->name_;
         std::cout<<std::flush;
