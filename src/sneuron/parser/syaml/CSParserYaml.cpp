@@ -47,14 +47,14 @@ namespace sneuron
       /**code to read network names from a file here */
       for( unsigned int i=0; i<doc.size(); i++)
       {
-    	  /* *
-    	   * Extract names and push into the vector
-    	   */
-    	  sneuron::string2 ss;
-    	  doc[i]["name"] >> ss.str1;
-    	  doc[i]["type"] >> ss.str2;
+        /* *
+         * Extract names and push into the vector
+         */
+        sneuron::string2 ss;
+        doc[i]["name"] >> ss.str1;
+        doc[i]["type"] >> ss.str2;
 
-    	  arg_network_name_type.push_back(ss);
+        arg_network_name_type.push_back(ss);
 
       }
       return true;
@@ -64,81 +64,95 @@ namespace sneuron
     return false;
   }
   /**
-     * overloading operator ">>" to read encoders into vector
-     */
-    void operator >> (const YAML::Node& node, Eigen::VectorXd& v)
+   * overloading operator ">>" to read encoders into vector
+   */
+  void operator >> (const YAML::Node& node, Eigen::VectorXd& v)
+  {
+    v.resize(node.size());
+    for(unsigned int i=0; i<node.size(); i++)
     {
-        v.resize(node.size());
-    	for(unsigned int i=0; i<node.size(); i++)
-         {
-				node[i] >> v(i);
-         }
+      node[i] >> v(i);
+    }
 
-      }
+  }
   /**
    * overloading operator ">>" to read a linear neuron's parameters to data structure SNeuronLinear
    */
   void operator >> (const YAML::Node& node, SNeuronLinear& n)
   {
-       node["name"] >> n.name_;
-       node["type"] >> n.type_;
-       node["id"] >> n.id_;
-       node["a"] >> n.a_;
-       node["b"] >> n.b_;
-       node["tref"] >> n.t_ref_;
-       node["encoders"] >> n.encoder_;
-    }
+    node["name"] >> n.name_;
+    node["type"] >> n.type_;
+    node["id"] >> n.id_;
+    node["a"] >> n.a_;
+    node["b"] >> n.b_;
+    node["tref"] >> n.t_ref_;
+    node["encoders"] >> n.encoder_;
+    n.uid_ = uid++;
+  }
+
   /**
    * overloading operator ">>" to read neuron sets to data structure SNeuralSet
    */
   void operator >> (const YAML::Node& node, SNeuronSet& set)
   {
-       try
-       {
-	   node["name"] >> set.name_;
-       node["n-neurons"] >> set.n_neurons_;
-       node["input-dimension"] >> set.input_dim_;
-       const YAML::Node& neurons = node["neurons"];
+    try
+    {
+      node["name"] >> set.name_;
+      node["n-neurons"] >> set.n_neurons_;
+      node["input-dimension"] >> set.input_dim_;
+      const YAML::Node& neurons = node["neurons"];
 
-       const YAML::Node& linear_neurons = neurons["lif"];
-       for(unsigned i=0;i<linear_neurons.size();i++) {
-             SNeuronLinear n;
-             n.uid_ = uid++;
-             std::string str;
-             linear_neurons[i]["name"] >> str;
-             SNeuron* s = set.neurons_.create(str);
-             if(s==NULL) { throw(std::runtime_error("Couldn't create an object on the PileMap")); }
-             linear_neurons[i] >> *s;
+      const YAML::Node& linear_neurons = neurons["lif"];
+      for(unsigned i=0;i<linear_neurons.size();i++)
+      {
+        //First, read the name of this neuron so we can create a unique entry in
+        //the pilemap
+        std::string str;
+        linear_neurons[i]["name"] >> str;
 
+        //Now create an entry in the pilemap (NOTE the ** because SNeuron is a super-class).
+        SNeuron** s = set.neurons_.create(str,NULL);
+        if(NULL==s) { throw(std::runtime_error("Couldn't create an object on the PileMap")); }
 
-          }
-       }
-       catch(std::exception& e)
-           { std::cerr<<"\nCSParserYaml::operator >> (YAML node,SNeuronSet) Error : "<<e.what(); }
+        //Now create a linear neuron into which the yaml parser will read the data
+        *s = new SNeuronLinear();
+        if(NULL==*s) { throw(std::runtime_error("Couldn't create an object of subclass")); }
+
+        //Dynamic cast the new pointer to a type that the yaml parser can process
+        SNeuronLinear *tmp;
+        tmp = dynamic_cast<SNeuronLinear*>(*s);
+        if(NULL == tmp){}
+
+        //Now read in the data from the yaml parser
+        linear_neurons[i] >> *tmp;
+      }
     }
+    catch(std::exception& e)
+    { std::cerr<<"\nCSParserYaml::operator >> (YAML node,SNeuronSet) Error : "<<e.what(); }
+  }
   /**
    * overloading operator ">>" to read network to data structure SNeuralNetwork
    */
 
   void operator >> (const YAML::Node& node, SNeuralNetwork& network)
   {
-	try
-	{
-     node["name"] >> network.name_;
-     node["type"] >> network.type_;
-     const YAML::Node& pools = node["set"];
-     for(unsigned i=0;i<pools.size();i++)
-     {
-    	  std::string str;
-    	   pools[i]["name"] >> str;
-           SNeuronSet* s = network.sets_.create(str);
-           if(s==NULL) { throw(std::runtime_error("Couldn't create an object on the PileMap"));}
-           pools[i] >> *s;
+    try
+    {
+      node["name"] >> network.name_;
+      node["type"] >> network.type_;
+      const YAML::Node& pools = node["set"];
+      for(unsigned i=0;i<pools.size();i++)
+      {
+        std::string str;
+        pools[i]["name"] >> str;
+        SNeuronSet* s = network.sets_.create(str);
+        if(NULL==s) { throw(std::runtime_error("Couldn't create an object on the PileMap"));}
+        pools[i] >> *s;
 
-        }
-	}
-	 catch(std::exception& e)
-	           { std::cerr<<"\nCSParserYaml::operator >> (YAML node,SNeuralNetwork) Error : "<<e.what(); }
+      }
+    }
+    catch(std::exception& e)
+    { std::cerr<<"\noperator >> (YAML node,SNeuralNetwork) Error : "<<e.what(); }
   }
 
 
@@ -153,25 +167,25 @@ namespace sneuron
     try
     {
       /** Add code to read a network from a file here */
-    	std::ifstream fin(arg_file.c_str());
-    	YAML::Parser parser(fin);
-    	YAML::Node doc;
-    	flag = parser.GetNextDocument(doc);
+      std::ifstream fin(arg_file.c_str());
+      YAML::Parser parser(fin);
+      YAML::Node doc;
+      flag = parser.GetNextDocument(doc);
 
-    	 if(false == flag)
-    	 { throw(std::runtime_error("Could not read any document in the yaml test file"));  }
-    	 bool found=false;
-    	 for(unsigned int i=0; i<doc.size(); i++){
-    		 std::string str;
-    		 doc[i]["name"] >> str;
-    		 if(str==arg_network_name){
-    			 found=true;
-
-    			 doc[i] >> arg_network;
-    		 }
-    	 }
-    		if(false==found)
-    		{ throw(std::runtime_error("Network not found")); }
+      if(false == flag)
+      { throw(std::runtime_error("Could not read any document in the yaml test file"));  }
+      bool found=false;
+      for(unsigned int i=0; i<doc.size(); i++){
+        std::string str;
+        doc[i]["name"] >> str;
+        if(str==arg_network_name)
+        {
+          found=true;
+          doc[i] >> arg_network;
+        }
+      }
+      if(false==found)
+      { throw(std::runtime_error("Network not found")); }
 
       return true;
     }

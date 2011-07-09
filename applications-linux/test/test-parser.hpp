@@ -55,7 +55,7 @@ namespace sneuron_test
     try
     {
       sneuron::CSParserYaml parser;
-      sneuron::SNeuralNetwork nn;
+
       sneuron::SANN ann;
 
       //1. Read in a file
@@ -82,21 +82,21 @@ namespace sneuron_test
       {
         if((*it).str2 == "NEF")
         {
+          //You need to receive every network in a new object.
+          sneuron::SNeuralNetwork nn;
 
+          //
           flag = parser.readNetworkFromFile(infile,(*it).str1, nn);
           if(false == flag)
           { throw(std::runtime_error("Could not read an NEF network from the test file"));  }
           else  { std::cout<<"\nTest Result ("<<r_id++<<") Read ("<<(*it).str1<<") NEF network from the test file"; }
 
-
-          flag=false;
-         if(nn.name_==(*it).str1 && nn.type_=="NEF" && nn.sets_.size()==1)
-         { flag = true; }
-         if (flag==false)
-         { throw(std::runtime_error("Could not parse an NEF network from the test file"));  }
-         else  { std::cout<<"\nTest Result ("<<r_id++<<") Successfully parsed ("<<(*it).str1<<") NEF network from the test file"; }
+          //
+          if(nn.name_!=(*it).str1 || "NEF"!=nn.type_ || 1!=nn.sets_.size())
+          { throw(std::runtime_error("Could not parse an NEF network from the test file"));  }
+          else
+          { std::cout<<"\nTest Result ("<<r_id++<<") Successfully parsed ("<<(*it).str1<<") NEF network from the test file"; }
         }
-
 
         else if((*it).str2 == "ANN")
         {
@@ -108,7 +108,7 @@ namespace sneuron_test
           /** A bunch of code that checks whether you've correctly read the file */
         }
 
-    }
+      }
       std::cout<<"\nTest #"<<arg_id<<" : Succeeded.";
     }
     catch (std::exception& ee)
