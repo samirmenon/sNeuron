@@ -253,7 +253,7 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx)
   //Make sure the idx hasn't already been registered.
   if(map_.find(arg_idx) != map_.end())
   {
-#ifdef W_TESTING
+#ifdef DEBUG
     printf("\nCPileMap<Idx,T>::create() ERROR : Idx exists. Tried to add duplicate entry");
 #endif
     return NULL;
@@ -282,7 +282,7 @@ T* CPileMap<Idx,T>::create(const Idx & arg_idx, const T& arg_t)
   //Make sure the idx hasn't already been registered.
   if(map_.find(arg_idx) != map_.end())
   {
-#ifdef W_TESTING
+#ifdef DEBUG
     printf("\nCPileMap<Idx,T>::create() ERROR : Idx exists. Tried to add duplicate entry");
 #endif
     return NULL;
@@ -440,7 +440,7 @@ bool CPileMap<Idx,T>::erase(const Idx& arg_idx)
   //Make sure the node exists
   if(map_.find(arg_idx) == map_.end())
   {
-#ifdef W_TESTING
+#ifdef DEBUG
     printf("\nCPileMap<Idx,T>::erase() WARNING : Tried to erase a nonexistent entry");
 #endif
     return false;
