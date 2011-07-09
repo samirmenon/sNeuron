@@ -47,7 +47,16 @@ namespace sneuron
   public:
     snUInt n_neurons_;
     snUInt input_dim_;
-    sneuron::CPileMap<std::string, SNeuron> neurons_;
+    /** Since SNeuron is a base class, and many neuron types exist
+     * we must allocate SNeuron objects like this:
+     *
+     * std::string name("MyName");//For example.
+     * SNeuron** n = neuron_.create(name,NULL);
+     * if(NULL == n) { We have an error. Handle it  }
+     * *n = new SNeuronSubclass();
+     * //And we are done.
+     */
+    sneuron::CPileMap<std::string, SNeuron*> neurons_;
 
     /** These are used to convert an input analog vector into
      * input currents for each neuron
@@ -60,13 +69,28 @@ namespace sneuron
     /** Default constructor : Does nothing */
     SNeuronSet(){}
     /** Default destructor : Does nothing */
-    virtual ~SNeuronSet(){}
+    virtual ~SNeuronSet();
 
     /* Inherited variables:
     std::string name_;
     std::string type_;
     snBool has_been_init_; */
   };
+
+  SNeuronSet::~SNeuronSet()
+  {
+    /** Since neuron pointers are stored in the database (SNeuron is a base class)
+     * we have to manually loop through the pilemap and delete the actual objects.
+     */
+    neurons_->resetIterator();
+    while(NULL!=neurons_->iterator_)
+    {
+      SNeuron* neuron = neurons_->iterator_->data_;
+      if(NULL!=neuron)
+      { delete neuron;  }
+      neurons_->iterator_ = neurons_->iterator_->next_;
+    }
+  }
 
 }
 
