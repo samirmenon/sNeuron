@@ -82,13 +82,13 @@ namespace sneuron
     /** Since neuron pointers are stored in the database (SNeuron is a base class)
      * we have to manually loop through the pilemap and delete the actual objects.
      */
-    neurons_->resetIterator();
-    while(NULL!=neurons_->iterator_)
+    neurons_.resetIterator();
+    while(NULL!=neurons_.iterator_)
     {
-      SNeuron* neuron = neurons_->iterator_->data_;
-      if(NULL!=neuron)
-      { delete neuron;  }
-      neurons_->iterator_ = neurons_->iterator_->next_;
+      SNeuron** neuron = neurons_.iterator_->data_;
+      if(NULL!=*neuron)
+      { delete *neuron;  }
+      neurons_.iterator_ = neurons_.iterator_->next_;
     }
   }
 
