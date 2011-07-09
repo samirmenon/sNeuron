@@ -50,7 +50,7 @@ namespace sneuron
    * All file-format specific parsers will subclass this API class.
    *
    * If you want to implement a new parser for a new filetype, please
-   * see how you should populate the sneuron/database/data_structs/*
+   * see how you should populate the sneuron/database/data_structs/ *
    * data structures (look at an existing parser to learn how).
    */
   class CSParser

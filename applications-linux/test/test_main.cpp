@@ -31,6 +31,7 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 
 
 #include "test-parser.hpp"
+#include "test-database.hpp"
 
 #include <sneuron/SNDataTypes.hpp>
 #include <sneuron/util/CSystemClock.hpp>
@@ -53,6 +54,7 @@ int main(int argc, char** argv)
     cout<<"\nThe command line input is: ./<executable> <test_number>";
     cout<<"\n"<<tid++<<" : Run all tests";
     cout<<"\n"<<tid++<<" : Run parser tests";
+    cout<<"\n"<<tid++<<" : Run database tests";
     cout<<"\n";
   }
   else
@@ -71,6 +73,17 @@ int main(int argc, char** argv)
           <<sneuron::CSystemClock::get_clock()->get_sim_time()
           <<"]";
       sneuron_test::test_parser(id);
+    }
+    ++id;
+
+    if((tid==0)||(tid==id))
+    {//Test clock
+      std::cout<<"\n\nTest #"<<id<<". System Clock [Sys time, Sim time :"
+          <<sneuron::CSystemClock::get_clock()->get_sys_time()
+          <<" "
+          <<sneuron::CSystemClock::get_clock()->get_sim_time()
+          <<"]";
+      sneuron_test::test_database(id);
     }
     ++id;
 

@@ -102,7 +102,7 @@ namespace sneuron_test
     }
     catch (std::exception& ee)
     {
-      std::cout<<"\nTest Result ("<<r_id++<<") : "<<ee.what();
+      std::cout<<"\nTest Error ("<<r_id++<<") : "<<ee.what();
       std::cout<<"\nTest #"<<arg_id<<" : Failed.";
     }
   }

@@ -54,8 +54,9 @@ namespace sneuron
   struct SDatabase
   {
     /** A pile containing the neuron type static information.
-     * Manages the data and enables pointer based access. */
-    sneuron::CPileMap<std::string, SNeuronType> neuron_types_;
+     * Manages the data and enables pointer based access.
+     * NOTE TODO*/
+    //sneuron::CPileMap<std::string, SNeuronType> neuron_types_;
 
     /** A pile containing the neural network static information.
      * Manages the data and enables pointer based access. */
