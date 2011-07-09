@@ -75,18 +75,29 @@ namespace sneuron_test
       else  { std::cout<<"\nTest Result ("<<r_id++<<") Read ("<<network_list.size()<<") networks from the test file"; }
 
       std::vector<sneuron::string2>::iterator it,ite;
+
+
       for(it = network_list.begin(), ite = network_list.end();
           it!=ite; ++it)
       {
         if((*it).str2 == "NEF")
         {
+
           flag = parser.readNetworkFromFile(infile,(*it).str1, nn);
           if(false == flag)
           { throw(std::runtime_error("Could not read an NEF network from the test file"));  }
           else  { std::cout<<"\nTest Result ("<<r_id++<<") Read ("<<(*it).str1<<") NEF network from the test file"; }
 
-          /** A bunch of code that checks whether you've correctly read the file */
+
+          flag=false;
+         if(nn.name_==(*it).str1 && nn.type_=="NEF" && nn.sets_.size()==1)
+         { flag = true; }
+         if (flag==false)
+         { throw(std::runtime_error("Could not parse an NEF network from the test file"));  }
+         else  { std::cout<<"\nTest Result ("<<r_id++<<") Successfully parsed ("<<(*it).str1<<") NEF network from the test file"; }
         }
+
+
         else if((*it).str2 == "ANN")
         {
           flag = parser.readANNFromFile(infile,(*it).str1, ann);
@@ -96,8 +107,8 @@ namespace sneuron_test
 
           /** A bunch of code that checks whether you've correctly read the file */
         }
-      }
 
+    }
       std::cout<<"\nTest #"<<arg_id<<" : Succeeded.";
     }
     catch (std::exception& ee)

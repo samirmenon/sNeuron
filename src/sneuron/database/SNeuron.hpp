@@ -77,12 +77,12 @@ namespace sneuron
 
     /** This is the refractory period. Ie. The time period after a spike
      * for which the neuron's membrane voltage remains fixed at zero. */
-    snFloat t_ref;
+    snFloat t_ref_;
 
     /** This should point to the memory in the Eigen::MatrixXd encoders_
      * from this neuron's set.
      */
-    Eigen::VectorXd* encoder_;
+    Eigen::VectorXd encoder_;
   };
 
   /** A quadratic neuron with the following dynamic equation:

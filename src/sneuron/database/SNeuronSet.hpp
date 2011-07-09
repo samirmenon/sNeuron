@@ -47,6 +47,7 @@ namespace sneuron
   public:
     snUInt n_neurons_;
     snUInt input_dim_;
+
     /** Since SNeuron is a base class, and many neuron types exist
      * we must allocate SNeuron objects like this:
      *

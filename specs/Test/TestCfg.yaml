@@ -3,7 +3,7 @@
 #String names should ALWAYS be unique
 
 #There may be multiple networks in a file
-- name: TestNetwork
+- name: TestNetwork1
   type: NEF
   set:
     - name: set-1
@@ -18,51 +18,47 @@
             a: 10
             b: 20
             tref: 0.001
-            encoder: 1 0
+            encoders: [1, 0]
           - name: n-lif-1
             type: LIF
             id: 1
             a: 10
             b: 20
             tref: 0.001
-            encoder: 0 -1
+            encoders: [0, -1]
       #NOTE TODO : This tag is under construction. Ignore it for now.
       connected-to:
         - name: set-2
           how: all-to-all
         - name: set-3
           how: decode
-    - name: set-2
-      n-neurons: 1
+- name: TestNetwork2
+  type: NEF
+  set:
+    - name: set-1
+      n-neurons: 2
       input-dimension: 2
-        # QUAD: dV/dt = aV^2 + bV + c
-        quad:
-          - name: n-quad-0
-            type: QUAD
+      neurons:
+        # LIF: dV/dt = aV + b; tref = refractory time
+        lif:
+          - name: n-lif-2
+            type: LIF
             id: 0
             a: 10
             b: 20
-            c: 20
-            encoder: 0 -1
-    - name: set-3
-      n-neurons: 1
-      input-dimension: 2
-        # DYN: dV/dt = arbitrary-nonlinear-func(V)
-        # Will use a lookup table for the dynamical system
-        dyn-1var:
-          - name: n-dyn-0
-            type: DYN
-            var: var-hh-1
-            id: 0
-    - name: set-4
-      n-neurons: 1
-      input-dimension: 2
-        # DYN: dV/dt = arbitrary-nonlinear-func(dx,dy)
-        # dx = a-n-f(V), dy = a-n-f(V)
-        # Will use a lookup table for the dynamical system
-        dyn-2var:
-          - name: n-dyn-0
-            type: DYN
-            var: var-hh-1
-            id: 0
-
+            tref: 0.001
+            encoders: [1, 0]
+          - name: n-lif-3
+            type: LIF
+            id: 1
+            a: 10
+            b: 20
+            tref: 0.001
+            encoders: [0, -1]
+      #NOTE TODO : This tag is under construction. Ignore it for now.
+      connected-to:
+        - name: set-2
+          how: all-to-all
+        - name: set-3
+          how: decode
+    
