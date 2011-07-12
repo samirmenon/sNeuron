@@ -1,0 +1,212 @@
+ALGORITHM that Nengo follows:
+
+
+1.Everything is done with the  help of pools. 
+
+2.So to represent any quantity we create a pool. Following are given as inputs for this purpose:
+	- TauRC (Membrane time constant) 
+	- TauRef (Refractory period)
+	- max and min rate (The max rate of every neuron in pool should be bounded by these)
+	- max and min intercept (Level of summed input at which spiking begins)
+	- radii 
+	neuron.unscaled_current = (state*1/Radii)*its encoders     //IMPORTANT: Value scaled by 1/radius
+	- dimensions (of the pool) //Dimension of pool >= dimensions of input. We transform from input space to pool space and take a dot product with the encdoing vector
+	- N (number of neurons)
+
+3. For every pool we initialise the following upon its creation:
+	
+	- a weighted cost approximator: 
+	A LinearApproximator in which error is evaluated at a fixed set of points, and the cost function that is minimized is a weighted integral of 
+	squared error. The noise is kept at 0.1 by default. The points at which error is evaluated are called the evalpoints
+	(This will be explained in detail later when we use it)
+	
+	- Encoder factory: 
+	To generate encoders for the pool. This is done using a random hypersphere. 
+	The radius of hypersphere is always set to one.(This radius is NOT the radius of the pool)
+	
+	- Evalpoints factory:
+	These are used to generate the evaluation points at which the function will be evaluated for calculating decoders(Appendix A of NEF Book)
+	This is again done with the help of random hypersphere.
+		// They dont actually integrate the error while training for the decoder weights instead they just sample points in the domain of the function and 
+		
+	Algorithm to generate encoders and evalpoints:
+	
+	For Random Hypersphere we specify three parameters:
+	
+	- Surface: TRUE => Vectors are generated on the surface of hypersphere.
+			   FALSE => Vectors are generated throughout the volume.
+	
+	 Surface is TRUE For Encoders and FALSE for evalpoints.
+	 
+	-Radius: This is the radius of Hypersphere. Always kept at 1.0
+	
+	-Axis Cluster Factor: Its value can range between 0 and 1. 0 is the default.
+			0=> even distirubution
+			1=> all vectors on axis
+		higher number means higher clustering around axis.
+
+		So whatever is your pool's dimensions you want to have atleast that many orthogonal axes to represent your input.
+		Now for every neuron we choose a preferred axis.. out of all the dimensions it has. Randomly.
+		
+		if cluster factor is 1 all vectors are on the axis.
+		
+		If cluster factor is not 1 then an axis ratio is calculated.
+		Axis Ratio = tan(( 0.5 + axisClusterFactor/2)*PI/2)   //Always more than one (1 to some very large value)
+		
+	You use this random hypersphere to create the encoder and evalpoint matrices.
+	Encoders order:  Number of neurons * number of dimensions of the pool
+	Evalpoints order: Number of points * number of dimensions 
+					 (PS: for every neuron Number of points is 500 numbers for each dimension that poool represents. Used as a thumb rule)
+	
+
+	You pass this 'number' and 'dimension' to the function that generates vectors. Following is the function
+	if dimension =1 for i= to number
+						if surface=1 vector[i][j]= radius or -radius (randomly alloted)		//Radius is 1.0
+						if surface!=1 vector[i][j]= random number between -radius and radius. 
+	if dimension!=1
+			you check the axis cluster factor. Since our factor is 0:
+			axis = some random dimension is chosen
+			
+			scale = surface? 1.0 : pow(random(), 1/dimension)      // So its the former for encoder and latter for evalpoints
+			
+			we do the following number times:
+				create new result[dimension]
+				for i=1 to dimension
+					result[i]=gaussianPDf.sample() //Very small values are alloted to the vector
+				
+				result[axis] is increased Axis Ratio times. //As a result the basis vectors become preferred towards a certain axis(Or dimension)
+				norm = sqrt(sigma(result[i])^2) 
+				
+				for all i = 1:dimension
+					result[i]=result[i]*scale/norm;
+					
+				
+	done
+	
+	The evalpoints and encoders are received.
+	
+	Evalpoints are scaled by the radii of pool! (each evalpoint is multiplied by radii)
+	
+	
+    Also for the pool we create N neurons. Parameters of every neuron are as follows:
+	- maxrate = random sample of rate by pdf
+	- intercept= random sample of intercept by pdf
+	- x = 1.0/(1.0-exp((TauRef-1/maxrate)/TauRC))   //x = the voltage at maxrate
+	- scale (this is alpha of NEF book) = (x-1.0)/(1.0-intercept)  
+	- bias = 1.0 - scale*intercept
+	//They have set bias and intercept so that the neuron achieves max rate at input*encoder = (2*intercept-1) 
+	- an integrator = Linear Synaptic Integrator //In our context does nothing.. except calculating a time vector. from startTime to endTime.
+	- a generator = LIF Spike Generator			//Spike generator.
+	- Every neuron can generate two types of output:
+		Unscaled Current //Voltage if R=1.. V=IR
+		Spikes
+	
+4. Once the pool is created. We add DecodedOrigins to it.
+	Decoded Origins give us the outputs. These are points where the value that the pool represents is decoded. 
+	You specify any functions here only. (example you gave the pool input of x and you want out sin(wx) specify the sine function here)
+	
+	So to add decoded origin we need to give the following:
+	- functions (The number of functions should be equal to the dimension of this origin)
+	- nodeOrigin type (There are two types "Current" and "Axon". We use AXON coz its the one that makes use of spikes)
+	
+	What happens in this function:
+	-evalpoints is rescaled by Radii of pool (DUH!!)
+	-for every neuron we calculate unscaled current = evalpoints * encoders. 
+	-scaled current = scale*unscaled current + bias
+	-Then this value is sent to the LIF Spike Generator.
+		The spike generator is where this current is taken and the following equation is applied over time steps from a start time to end time:
+			dv = (1/myTauRC)*(I*R - myvoltage)  //myvoltage is intially zero
+			V _th = 1; R=1,
+		Spike generator simply returns whether or not there was a spike in the last time step.		
+	-This value is set in the AXON origin of neuron. The unscaled current is set in the CURRENT origin of neuron.
+	-So this way for all neurons we get a RASTER SCAN. Showing on what values of evalpoint which neuron spiked!
+	//Basically this helps you test whether a neuron can spike at all for this value of input. Which means whether -b/a> Vth
+	
+	-Now This raster scan goes as input to our WEIGHTED COST APPROXIMATER factory. This class is used to calculate GAMMA_INVERSE basically.
+	Refer Appendix A (NEF Book)
+	    - you first add noise to the raster values SD=0.1*,max value of raster) And then add a gaussian distributed noise.
+		-cost function is always taken as ConstantFunction(dimension,1) 
+		- we calculate gamma[i][j] += NoisyRaster[i][k] * NoisyRaster[j][k] * myCostFunction.map(myEvalPoints[k]); //the last factor is always 1
+		-And then we calculate gamma inverse. (Size = Neurons * Neurons)
+		-you find the default decoders. This will make use of:
+				- gamma inverse
+				-function you specified
+				
+				How to calculate decoders?
+				- 	TargetValues[i] stores the value of function at evalpoints[i][]
+				-	Upsilon = sigma ( noisyRaster[i][j]*TargetValues[j]*costFunc(=1)	//Upsilon is small gamma. 
+				-	Upsilon = Upsilon/TargetValues.length()
+				-	decoders = sigma(gamma_inverse[i][j]*upsilon[j])
+				- 	Size of decoders =Neurons * OutputDimension
+			//This does not involve actual integration. It is just calculating the average over randomly sampled inputs(evalPoints)
+				
+5. Now we add Decoded Termination: These are the input points of the Pool. The decoded termination are also the points where the system dynamics 
+	is implemented.  
+	For adding decoded termination you specify:
+	- Transformation Matrix: That is how are the inputs going to be mapped on to the dimensions of the pool
+	- Post Synaptic Time constant
+	
+	-The dynamical of a simple linear system are:
+	x'(t)= Ax(t) + Bu(t)
+	y(t) = Cx(t) + Du(t)
+	
+	We specify a simple LTI system with following matrices:
+	A = [[-1/tauPSC]]
+	B = [[1]]
+	C = [[1/tauPSC]]
+	D = 0
+	
+	We also specify a Euler Integrator for this termination with step size = tauPSC/10;
+	
+	How these are used will be explained with the final "Run".
+	
+6.  We also add Projections to our network. That is connections between the inputs and outputs of various pools. We add some FunctionInputs 
+	to specify our input values to some of the pools. Functional inputs also have outputs(not spiking ofcourse) with the value stored. 
+	All arguments for origins will apply to them too.
+
+7. What Happens when we run the simulation from a startTime to an endTime:
+	t=startTime
+	while(t < endTime){
+	In every step(t,t+stepSize):
+	1. Loop over all projections. Read values from origins and store into terminations.
+	2. Loop over each pool in the network. Call their run.
+			Run function of every pool:
+				calls run on every termination of the pool. Multiple dimensions may be associated with a termination.
+					for each dimension:
+						calculate dynamicsInput = transform * inputValues
+						You feed the start and end time, dynamical matrices and this input to a euler integrator. The integrator makes use
+						of an interpolator to calculate values of function i.e. u(t) at intermittent times.
+						integrator calculates "values" y(t) using the above linear system and returns this vector.
+						The finalValue i.e. y(length()-1) is stored as "value of the Origin".
+						
+				We update the "state" of pool. state=state+output of every termination //if A and B were your input and [[1,0],[0,1]] was matrix then 
+																					   //state is [A,B] Value of all dimension of pool after this time
+																					   //step
+				
+				Now for each neuron in pool
+					neuron.unscaled_current = (state*1/Radii)*its encoders     //IMPORTANT: Value scaled by 1/radius
+					neuron.run()
+					   neuron's run function:
+								generator_input = bias + scale*unscaled_current
+								call the LIF spike generator. Which will tell us whether neuron spiked in this time interval or not
+								AXON origin is given the value whether it spiked or not
+								CURRENT origin is given the value of unscaled current
+								
+				Now loop over all outputs and call their run.
+					outputs's run method:
+						loop over all neurons in the pool:
+							get their spike output 				//AXON
+								if (spike) val = 1/stepSize;   //stepSize = endTime-startTime
+								else val=0;
+								//Now decode
+								for j=0:OutputDimension
+									values[j]+=val*neuron.decoders[j]
+							
+								
+		
+		
+		t=t+stepSize;
+		}
+	
+		And then our value is read when we probe an origin!
+
