@@ -18,20 +18,38 @@
             a: 10
             b: 20
             tref: 0.001
-            encoders: [1, 0]
+            #Syntax: [1, 0]' = 1 0
+            encoders: 1 0
           - name: n-lif-1
             type: LIF
             id: 1
             a: 10
             b: 20
             tref: 0.001
-            encoders: [0, -1]
+            encoders: 0 -1
       #NOTE TODO : This tag is under construction. Ignore it for now.
       connected-to:
         - name: set-2
+          #When the neuron spike rates/spikes feed into the next set
           how: all-to-all
         - name: set-3
+          #When some decoded function is fed into the next set
           how: decode
+          decoder: decoder1
+          transform-matrix-row-major: 1 0 0 1
+      decoders:
+        - name: decoder1
+          type: sin
+          property1: blah
+          property2: blah
+        - name: decoder2
+          type: cos
+          property1: blah
+          property2: blah
+        - name: decoder3
+          type: x
+          property1: blah
+          property2: blah
 - name: TestNetwork2
   type: NEF
   set:
