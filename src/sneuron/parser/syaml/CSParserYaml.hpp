@@ -36,7 +36,7 @@ SNeuron. If not, see <http://www.gnu.org/licenses/>.
 
 namespace sneuron
 {
-
+  /** A Yaml parser that implements the sNeuron parser API. */
   class CSParserYaml : public sneuron::CSParser
   {
   public:
