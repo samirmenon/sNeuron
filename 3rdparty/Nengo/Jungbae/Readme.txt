@@ -8,5 +8,8 @@ neurogridAmatrixjvi: matlab file for generating the mass matrix using symbolic m
 
 
 3DOFspike.py, test3.py: This is a working implementation of joint space dynamic control in spiking mode. A matrix is implemented separately in test3.py.
-In simulation, the limbs are commanded to form 90 degrees from local horizontal reference within 4~5 seconds.
-			
+In simulation, the limbs are commanded to form 90 degrees from local horizontal reference within 4~5 seconds. test3.py contains functions needed for the main 3DOFspike.py to create the A matrix network.
+How: 1. open file/run network (test3.py) FIRST
+     2. run 3DOFspike.py 
+
+		
