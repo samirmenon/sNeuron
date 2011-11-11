@@ -36,10 +36,13 @@ try:
 except:
     pass
 
-#sys.path.append('C:\Users\jsohn123\Desktop\NEURAL CONTROLLER\nengo\nengo-1132\REU')
+#NOTE : You have to customize this to your own file system structure
+# OTHERWISE THE APP WILL NOT RUN!
+# Need this because some external modules are in the test3.py file.
+# And nengo can't find it without the dir
+sys.path.append('/home/samir/Code/sNeuronV2.git/3rdparty/Nengo/Jungbae')
 
 
-    
 network = NetworkImpl()
 network.name ='simple arm controller'
 
